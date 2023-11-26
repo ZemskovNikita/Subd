@@ -70,7 +70,11 @@ int main() {
     cout << endl << "Сумма массива: " << calculateSum(arr, size);
 
 
-    delete[] arr;
+    if (arr != nullptr)
+    {
+        delete[] arr;
+        arr = nullptr;
+    }
 
     return 0;
 }
