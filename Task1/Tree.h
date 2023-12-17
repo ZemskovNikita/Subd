@@ -188,16 +188,14 @@ Node<T>* Tree<T>::delete_at_sub(const T& i, Node<T>* p)
     if (!p)
         return p;
 
-    // Рекурсивно ищем узел для удаления
+    // ГђГҐГЄГіГ°Г±ГЁГўГ­Г® ГЁГ№ГҐГ¬ ГіГ§ГҐГ« Г¤Г«Гї ГіГ¤Г Г«ГҐГ­ГЁГї
     if (i < p->val)
         p->pLeft = delete_at_sub(i, p->pLeft);
     else if (i > p->val)
         p->pRight = delete_at_sub(i, p->pRight);
     else
     {
-        // Узел для удаления найден
-
-        // Узел без потомков или с одним потомком
+   
         if (!p->pLeft)
         {
             Node<T>* temp = p->pRight;
@@ -210,8 +208,7 @@ Node<T>* Tree<T>::delete_at_sub(const T& i, Node<T>* p)
             delete p;
             return temp;
         }
-
-        // Узел с двумя потомками
+        
         Node<T>* temp = minValue(p->pRight);
         p->val = temp->val;
         p->pRight = delete_at_sub(temp->val, p->pRight);
