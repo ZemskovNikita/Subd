@@ -9,13 +9,7 @@ public:
     Node<T>* pRight;
     T val;
 
-    Node<T>(T val)
-    {
-        this->val = val;
-        pLeft = pRight = nullptr;
-    }
-
+    Node<T>(T val) : val{val}, pLeft{nullptr}, pRight{nullptr} {}
 };
-
 
 #endif // NODE_H_INCLUDED
