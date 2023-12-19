@@ -6,10 +6,15 @@
 #include <string>
 #include <sstream>
 
+/**
+ * @brief Представляет бинарное дерево поиска.
+ *
+ * @tparam T Тип значений, хранящихся в дереве.
+ */
 template<typename T>
 class Tree
 {
-    Node<T>* root;
+    Node<T>* root; /**< Указатель на корневой узел дерева. */
     Node<T>* insert_at_sub(T i, Node<T>*);
     Node<T>* delete_at_sub(const T& i, Node<T>* p);
     int countNodes(Node<T>* p);
@@ -18,25 +23,42 @@ class Tree
     Node<T>* maxValue(Node<T>*);
     Node<T>* get_last(Node<T>*);
     Node<T>* get_first(Node<T>*);
-    int t_size = 0;
+    int t_size = 0; /**< Количество элементов в дереве. */
 
 public:
+     /**
+     * @brief Конструктор по умолчанию для класса Tree.
+     */
     Tree()
     {
         root = nullptr;
     }
 
+    /**
+     * @brief Деструктор для класса Tree.
+     */
     ~Tree()
     {
         delete root;
     }
 
+    /**
+     * @brief Добавляет новый элемент в дерево.
+     *
+     * @param i Значение для добавления в дерево.
+     */
     void add(T i)
     {
         ++t_size;
 
         root = insert_at_sub(i, root);
     }
+
+    /**
+     * @brief Возвращает строковое представление дерева.
+     *
+     * @return Строка, содержащая значения дерева в порядке возрастания.
+     */
     std::string print()
     {
         std::ostringstream buffer{};
@@ -44,12 +66,23 @@ public:
         return buffer.str();
     };
 
+    /**
+     * @brief Проверяет, присутствует ли заданное значение в дереве.
+     *
+     * @param i Значение для проверки.
+     * @return True, если значение присутствует, в противном случае - false.
+     */
     bool contain(T i)
     {
         return contain_sub(i, root);
     }
     bool contain_sub(T i, Node<T>* p);
 
+    /**
+     * @brief Удаляет указанный элемент из дерева.
+     *
+     * @param i Значение для удаления.
+     */
     void destroy(T i)
     {
         if (contain(i))
@@ -58,19 +91,31 @@ public:
             return;
     }
 
-    void showFirst();
-    void showLast();
-
+    /**
+     * @brief Получает количество элементов в дереве.
+     *
+     * @return Количество элементов в дереве.
+     */
     int get_size()
     {
         return t_size;
     }
 
+    /**
+     * @brief Получает количество узлов в левом поддереве корня.
+     *
+     * @return Количество узлов в левом поддереве.
+     */
     int getNumberLeftNodes()
     {
         return countNodes(root->pLeft);
     }
 
+    /**
+     * @brief Получает количество узлов в правом поддереве корня.
+     *
+     * @return Количество узлов в правом поддереве.
+     */
     int getNumberRightNodes()
     {
         return countNodes(root->pRight);
@@ -82,14 +127,14 @@ int  Tree<T>::countNodes(Node<T>* p)
 {
     static int nodes;
 
-    if (!p)
+     if (p != nullptr)
         return 0;
-    if (p->pLeft)
+    if (p->pLeft != nullptr)
     {
         ++nodes;
         countNodes(p->pLeft);
     }
-    if (p->pRight)
+    if (p->pRight != nullptr)
     {
         ++nodes;
         countNodes(p->pRight);
@@ -101,7 +146,7 @@ int  Tree<T>::countNodes(Node<T>* p)
 template<typename T>
 Node<T>* Tree<T>::insert_at_sub(T i, Node<T>* p)
 {
-    if (!p)
+    if (p != nullptr)
         return new Node<T>(i);
     else if (i <= p->val)
         p->pLeft = insert_at_sub(i, p->pLeft);
@@ -110,6 +155,7 @@ Node<T>* Tree<T>::insert_at_sub(T i, Node<T>* p)
 
     return p;
 }
+
 
 template<typename T>
 std::string Tree<T>::print_sub(Node<T>* p, std::ostringstream& out)
@@ -126,7 +172,7 @@ std::string Tree<T>::print_sub(Node<T>* p, std::ostringstream& out)
 template<typename T>
 bool Tree<T>::contain_sub(T i, Node<T>* p)
 {
-    if (!p)
+    if (p != nullptr)
         return false;
     else if (i == p->val)
         return true;
@@ -159,36 +205,14 @@ Node<T>* Tree<T>::maxValue(Node<T>* p)
     return current;
 }
 
-template<typename T>
-void Tree<T>::showLast()
-{
-    Node<T>* last = maxValue(root);
-
-    if (last)
-        std::cout << last->val;
-    else
-        std::cout << "";
-}
-
-template<typename T>
-void Tree<T>::showFirst()
-{
-    Node<T>* first = minValue(root);
-
-    if (first)
-        std::cout << first->val;
-    else
-        std::cout << "";
-}
-
 
 template<typename T>
 Node<T>* Tree<T>::delete_at_sub(const T& i, Node<T>* p)
 {
-    if (!p)
+    if (p != nullptr)
         return p;
 
-    // Ðåêóðñèâíî èùåì óçåë äëÿ óäàëåíèÿ
+   
     if (i < p->val)
         p->pLeft = delete_at_sub(i, p->pLeft);
     else if (i > p->val)
