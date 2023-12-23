@@ -15,31 +15,30 @@ template<typename T>
 class Tree
 {
     Node<T>* root; /**< Указатель на корневой узел дерева. */
-    Node<T>* insert_at_sub(T i, Node<T>*);
-    Node<T>* delete_at_sub(const T& i, Node<T>* p);
-    int countNodes(Node<T>* p);
-    std::string print_sub(Node<T>* p, std::ostringstream& out);
-    Node<T>* minValue(Node<T>*);
-    Node<T>* maxValue(Node<T>*);
-    Node<T>* get_last(Node<T>*);
-    Node<T>* get_first(Node<T>*);
-    int t_size = 0; /**< Количество элементов в дереве. */
+    Node<T>* insert_at_sub(T i, Node<T>* p); /**< Вставляет новый узел в поддерево. */
+    Node<T>* delete_at_sub(const T& i, Node<T>* p); /**< Удаляет узел с заданным значением из поддерева. */
+    int countNodes(Node<T>* p); /**< Рекурсивно подсчитывает количество узлов в поддереве. */
+    std::string print_sub(Node<T>* p, std::ostringstream& out); /**< Рекурсивно формирует строковое представление поддерева. */
+    Node<T>* minValue(Node<T>* p); /**< Находит узел с минимальным значением в поддереве. */
+    Node<T>* maxValue(Node<T>* p); /**< Находит узел с максимальным значением в поддереве. */
+    Node<T>* get_last(Node<T>* p); /**< Возвращает указатель на последний узел в поддереве. */
+    Node<T>* get_first(Node<T>* p); /**< Возвращает указатель на первый узел в поддереве. */
+    void deleteSubTree(Node<T>* p); /**< Рекурсивно удаляет все узлы в поддереве. */
+    size_t t_size = 0; /**< Количество элементов в дереве. */
+
 
 public:
-     /**
-     * @brief Конструктор по умолчанию для класса Tree.
-     */
-    Tree()
-    {
-        root = nullptr;
-    }
+    /**
+    * @brief Конструктор по умолчанию для класса Tree.
+    */
+    Tree() : root{ nullptr } {}
 
     /**
      * @brief Деструктор для класса Tree.
      */
     ~Tree()
     {
-        delete root;
+        deleteSubTree(root);
     }
 
     /**
@@ -50,7 +49,6 @@ public:
     void add(T i)
     {
         ++t_size;
-
         root = insert_at_sub(i, root);
     }
 
@@ -123,17 +121,30 @@ public:
 };
 
 template<typename T>
-int  Tree<T>::countNodes(Node<T>* p)
+void Tree<T>::deleteSubTree(Node<T>* p)
+{
+    if (p != nullptr)
+    {
+        deleteSubTree(p->pLeft);
+        deleteSubTree(p->pRight);
+        delete p;
+    }
+}
+
+template<typename T>
+int Tree<T>::countNodes(Node<T>* p)
 {
     static int nodes;
 
-     if (p != nullptr)
+    if (p == nullptr)
         return 0;
+
     if (p->pLeft != nullptr)
     {
         ++nodes;
         countNodes(p->pLeft);
     }
+
     if (p->pRight != nullptr)
     {
         ++nodes;
@@ -146,16 +157,16 @@ int  Tree<T>::countNodes(Node<T>* p)
 template<typename T>
 Node<T>* Tree<T>::insert_at_sub(T i, Node<T>* p)
 {
-    if (p != nullptr)
+    if (p == nullptr)
         return new Node<T>(i);
-    else if (i <= p->val)
+
+    if (i <= p->val)
         p->pLeft = insert_at_sub(i, p->pLeft);
     else if (i > p->val)
         p->pRight = insert_at_sub(i, p->pRight);
 
     return p;
 }
-
 
 template<typename T>
 std::string Tree<T>::print_sub(Node<T>* p, std::ostringstream& out)
@@ -172,7 +183,7 @@ std::string Tree<T>::print_sub(Node<T>* p, std::ostringstream& out)
 template<typename T>
 bool Tree<T>::contain_sub(T i, Node<T>* p)
 {
-    if (p != nullptr)
+    if (p == nullptr)
         return false;
     else if (i == p->val)
         return true;
@@ -183,7 +194,6 @@ bool Tree<T>::contain_sub(T i, Node<T>* p)
 }
 
 template<typename T>
-
 Node<T>* Tree<T>::minValue(Node<T>* p)
 {
     Node<T>* current = p;
@@ -205,42 +215,40 @@ Node<T>* Tree<T>::maxValue(Node<T>* p)
     return current;
 }
 
-
 template<typename T>
 Node<T>* Tree<T>::delete_at_sub(const T& i, Node<T>* p)
 {
-    if (p != nullptr)
-        return p;
+    if (p == nullptr)
+        return nullptr;
 
-   
     if (i < p->val)
         p->pLeft = delete_at_sub(i, p->pLeft);
     else if (i > p->val)
         p->pRight = delete_at_sub(i, p->pRight);
     else
     {
-   
         if (!p->pLeft)
         {
             Node<T>* temp = p->pRight;
             delete p;
+            --t_size;
             return temp;
         }
         else if (!p->pRight)
         {
             Node<T>* temp = p->pLeft;
             delete p;
+            --t_size;
             return temp;
         }
-        
+
         Node<T>* temp = minValue(p->pRight);
         p->val = temp->val;
         p->pRight = delete_at_sub(temp->val, p->pRight);
+        --t_size;
     }
 
     return p;
 }
-
-
 
 #endif // TREE_H_INCLUDED
